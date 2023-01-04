@@ -1,0 +1,143 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: InvestideaService API 
+  description: The component performs the formation of investment ideas (investideas), which are prepared by investment analysts. Easy to integrate into the investment application. Made for training purposes
+servers:
+  - description: Postman Mock Server
+    url: https://0f3738d5-8fb5-44a8-8c83-6d3aac76c0b8.mock.pstmn.io
+paths:
+  /investidea:
+    get:
+      tags:
+      - Investideas
+      summary: Geting investideas
+      description: Returns available, depending on the parameters, investideas with metainformation
+      operationId: get-investideas
+      parameters:
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/type'
+      deprecated: false
+      responses:
+        '200':
+          description: Successfull response
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/getInvestideaSucessfullResponse'
+                
+components:
+  parameters:
+    sort:
+      name: sort
+      in: query
+      description: Sorting type
+      required: false
+      schema:
+        $ref: '#/components/schemas/sortQueryParam'
+    type:
+      name: type
+      in: query
+      description: Investidea type (share / bond / fund)
+      required: false
+      schema:
+        $ref: '#/components/schemas/typeQueryParam'
+        
+  schemas:
+    sortQueryParam:
+      type: string
+      enum: [date, profitability]
+    typeQueryParam:
+      type: string
+      enum: [share, bond, fund]
+    getInvestideaSucessfullResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/investideaData'
+        message:
+          $ref: '#/components/schemas/messageInfo'
+    investideaData:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/investideaItems'
+    investideaItems:
+      title: items
+      type: array
+      items:
+        $ref: '#/components/schemas/investideaItemObject'
+    investideaItemObject:
+      type: object
+      properties: 
+        id:
+          type: integer
+          example: 1
+          description: investidea ID
+        description:
+          type: string
+          example: Potentially interesting liquidity fund from VTB, especially now
+          description: Description of the investidea filled out by the investment analyst
+        openingDate:
+          type: integer
+          format: timestamp
+          example: 1669766400
+          description: Creation date of the investidea in timestamp unix format
+        productInfo:
+          $ref: '#/components/schemas/productInfoObject'
+        companyInfo:
+          $ref: '#/components/schemas/companyInfoObject'
+    productInfoObject:
+      type: object
+      description: Information about the financial product that is promoted in the investidea
+      properties:
+        id:
+          type: integer
+          description: Financial product ID
+          example: 2
+        name:
+          type: string
+          description: Name of the financial product
+          example: Liquidity (RUB)
+        type: 
+          type: string
+          description: Type of the financial product
+          enum: [fund, obligation, share]
+          example: fund
+        price: 
+          type: integer
+          description: Market price of the financial product on the exchange
+          example: 1.1439
+        priceCurrency:
+          type: string
+          description: Currency of the market price of the financial product
+          enum: [Ruble, Euro, USD]
+          example: Ruble
+        profitability:
+          type: integer
+          description: Potential profitability of the financial product
+          example: 13.7
+    companyInfoObject:
+      type: object
+      description: Information about the company owning the financial product
+      properties:
+        id:
+          type: integer
+          description: Company ID
+          example: 4
+        name:
+          type: string
+          description: Name of the company
+          example: VTB
+        logo:
+          type: string
+          description: Static url with logo picture of the company
+          format: url
+          example: https://www.vtb.ru/media-files/vtb.ru/sitepages/Payments_540_1x.webp
+        description:
+          type: string
+          description: Description of the company
+          example: Russian majority state-owned bank
+    messageInfo:
+      type: string
+      example: OK
