@@ -38,7 +38,7 @@ components:
     type:
       name: type
       in: query
-      description: Investidea type (share / bond / fund)
+      description: Investidea type
       required: false
       schema:
         $ref: '#/components/schemas/typeQueryParam'
